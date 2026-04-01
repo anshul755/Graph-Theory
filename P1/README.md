@@ -1,44 +1,56 @@
-# Overview
-This project contains a Java implementation for creating and representing graphs using various data structures. It serves as a practical demonstration of graph theory concepts, specifically focusing on graph representations and conversions.
+# Practical 1 - Graph Representations and Basic Graph Updates
 
-## Features
-The program provides a command-line interface (CLI) with a menu-driven system to create graphs using three different methods:
+## Aim
+Build graphs using standard representations and perform basic update operations on the generated structure.
 
-1.  **Adjacency Matrix**:
-    - Users can input a square matrix (NxN) where an entry acts as a weight or existence indicator (non-zero implies an edge).
-    - Converts the matrix into an internal Adjacency List representation.
+## What This Practical Does
+This practical provides a menu-driven Java program to work with graphs using:
+- adjacency matrix input
+- adjacency list input
+- incidence matrix input for directed and undirected graphs
+- edge deletion in undirected graphs
+- edge deletion in directed graphs
+- vertex deletion from the graph
 
-2.  **Adjacency List**:
-    - Users establish a graph by specifying the degree (number of neighbors) and the specific neighbors for each vertex.
-    - Directly builds the graph structure.
+Internally, the graph is displayed as an adjacency-list-style structure.
 
-3.  **Incidence Matrix**:
-    - Supports both **Directed** and **Undirected** graphs.
-    - **Directed**: Uses `1` for outgoing edges and `-1` for incoming edges.
-    - **Undirected**: Uses `1` to indicate incidence (an edge responding to two vertices).
-    - Converts the incidence matrix into an internal Adjacency List representation.
+## Files
+- `P1.java`: main implementation for graph creation, conversion, display, and deletion operations
+
+## Key Concepts Covered
+- graph representation
+- adjacency matrix
+- adjacency list
+- incidence matrix
+- directed and undirected graphs
+- edge deletion
+- vertex deletion
 
 ## How to Run
-1.  **Prerequisites**: Ensure you have Java (JDK) installed on your system.
-2.  **Compilation**:
-    Open your terminal or command prompt in the source directory and run:
-    ```bash
-    javac -d . P1.java
-    ```
-3.  **Execution**:
-    Run the compiled class file:
-    ```bash
-    java graphTheoryP1.P1
-    ```
-
-## Usage
-Upon running the program, you will be presented with a menu:
-```text
---- Graph Creation Menu ---
-1. Adjacency Matrix
-2. Adjacency List
-3. Incidence Matrix
-0. Exit
-Enter your choice: 
+Compile:
+```bash
+javac -d . P1.java
 ```
-Select an option by entering the corresponding number and follow the on-screen prompts to input your graph data. The program will then display the generated graph structure as an adjacency list.
+
+Run:
+```bash
+java P1.P1
+```
+
+## Program Flow
+The program shows a menu and lets the user choose one graph task at a time. Based on the selected option, it:
+1. accepts graph input
+2. converts it into an adjacency-list-style structure
+3. performs the requested operation
+4. prints the resulting graph
+
+## Sample Features
+- create a graph from an adjacency matrix
+- create a graph from adjacency list input
+- create a graph from an incidence matrix
+- remove an undirected edge
+- remove a directed edge
+- delete a vertex and update the graph
+
+## Learning Outcome
+After completing this practical, you can understand how the same graph can be represented in different forms and how simple graph modification operations affect the stored structure.

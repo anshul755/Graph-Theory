@@ -26,6 +26,9 @@ public class P1 {
             System.out.println("1. Adjacency Matrix");
             System.out.println("2. Adjacency List");
             System.out.println("3. Incidence Matrix");
+            System.out.println("4. Undirected Graph Delete Edge");
+            System.out.println("5. Directed Graph Delete Edge");
+            System.out.println("6. Vertex Delete");
             System.out.println("0. Exit");
             System.out.print("Enter your choice: ");
 
@@ -45,6 +48,30 @@ public class P1 {
                     break;
                 case 3:
                     callIncidenceMatrix(sc);
+                    break;
+                case 4:
+                    List<List<Edge>> graph_ud=new ArrayList<>();
+                    calladjList(sc,graph_ud);
+                    System.out.println("Enter the vertices of Edge to delete the edge: ");
+                    int src_ud=sc.nextInt();
+                    int dest_ud=sc.nextInt();
+                    undirectedDelEdge(graph_ud,src_ud, dest_ud);
+                    break;
+                case 5:
+                    List<List<Edge>> graph_d=new ArrayList<>();
+                    calladjList(sc,graph_d);
+                    System.out.println("Enter the vertices of Edge to delete the edge: ");
+                    int src_d=sc.nextInt();
+                    int dest_d=sc.nextInt();
+                    Edge e_d=new Edge(src_d, dest_d);
+                    directedDelEdge(graph_d,e_d);
+                    break;
+                case 6:
+                    List<List<Edge>> graph_v=new ArrayList<>();
+                    calladjList(sc,graph_v);
+                    System.out.println("Enter the vertice to delete it:");
+                    int v=sc.nextInt();
+                    DelVertice(graph_v,v);
                     break;
                 default:
                     System.out.println("Invalid choice! Please try again.");
@@ -88,6 +115,27 @@ public class P1 {
         int n = sc.nextInt();
 
         List<List<Edge>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++)
+            graph.add(new ArrayList<>());
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter number of neighbors for vertex " + i + ": ");
+            int degree = sc.nextInt();
+            System.out.print("Enter neighbors of vertex " + i + ": ");
+            for (int j = 0; j < degree; j++) {
+                int neighbor = sc.nextInt();
+                graph.get(i).add(new Edge(i, neighbor));
+            }
+        }
+        printGraph(graph);
+    }
+
+    private static void calladjList(Scanner sc, List<List<Edge>> graph) {
+        System.out.println("\n-- Adjacency List --");
+
+        System.out.print("Enter the No. of Vertices: ");
+        int n = sc.nextInt();
+
         for (int i = 0; i < n; i++)
             graph.add(new ArrayList<>());
 
@@ -162,10 +210,48 @@ public class P1 {
         printGraph(graph);
     }
 
+    private static void undirectedDelEdge(List<List<Edge>> graph, int src, int dest){
+        for(int i=0;i<graph.get(src).size();i++){
+            if(graph.get(src).get(i).dest==dest){
+                graph.get(src).remove(i);
+                break;
+            }
+        }
+        for(int i=0;i<graph.get(dest).size();i++){
+            if(graph.get(dest).get(i).dest==src){
+                graph.get(dest).remove(i);
+                break;
+            }
+        }
+        printGraph(graph);
+    }
+
+    private static void directedDelEdge(List<List<Edge>> graph, Edge e){
+        for(int i=0;i<graph.get(e.src).size();i++){
+            if(graph.get(e.src).get(i).dest==e.dest){
+                graph.get(e.src).remove(i);
+                break;
+            }
+        }
+        printGraph(graph);
+    }
+
+    private static void DelVertice(List<List<Edge>> graph, int v){
+        graph.remove(v);
+        for(int i=0;i<graph.size();i++){
+            for(int j=0;j<graph.get(i).size();j++){
+                if(graph.get(i).get(j).dest==v){
+                    graph.get(i).remove(j);
+                }
+            }
+        }
+        printGraph(graph);
+    }
+
     private static void printGraph(List<List<Edge>> graph) {
         System.out.println("\nGenerated Graph Structure (Adjacency List):");
         for (int i = 0; i < graph.size(); i++) {
-            System.out.print("Vertex " + i + ": ");
+            System.out.print("Vertex " + ": ");
             if (graph.get(i).isEmpty()) {
                 System.out.print("No edges");
             }

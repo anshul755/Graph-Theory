@@ -72,7 +72,51 @@ public class P2 {
         return G.get(e.src).contains(e);
     }
 
-    private static List<List<Edge>> Union(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+    static boolean isVertexDisjoint(List<List<Edge>> G1, List<List<Edge>> G2) {
+        int minV = Math.min(G1.size(), G2.size());
+        for (int i = 0; i < minV; i++) {
+            if (!G1.get(i).isEmpty() && !G2.get(i).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean isEdgeDisjoint(List<List<Edge>> G1, List<List<Edge>> G2) {
+        int minV = Math.min(G1.size(), G2.size());
+        for (int i = 0; i < minV; i++) {
+            for (Edge e : G1.get(i)) {
+                if (exists(G2, e)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    static boolean isIdentical(List<List<Edge>> G1, List<List<Edge>> G2) {
+        if (G1.size() != G2.size())
+            return false;
+        for (int i = 0; i < G1.size(); i++) {
+            if (G1.get(i).size() != G2.get(i).size())
+                return false;
+            for (Edge e : G1.get(i)) {
+                if (!exists(G2, e))
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    static List<List<Edge>> Union(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+        if (isVertexDisjoint(G1, G2)) {
+            System.out.println("Graphs are Vertex Disjoint (implies Edge Disjoint).");
+        } else if (isEdgeDisjoint(G1, G2)) {
+            System.out.println("Graphs are Edge Disjoint.");
+        } else if (isIdentical(G1, G2)) {
+            System.out.println("Graphs are Identical.");
+        }
+
         int maxV = Math.max(v1, v2);
         List<List<Edge>> U = new ArrayList<>();
         for (int i = 0; i < maxV; i++)
@@ -92,7 +136,13 @@ public class P2 {
         return U;
     }
 
-    private static List<List<Edge>> Intersection(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+    static List<List<Edge>> Intersection(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+        if (isEdgeDisjoint(G1, G2)) {
+            System.out.println("Graphs are Edge Disjoint. Intersection is empty.");
+        } else if (isIdentical(G1, G2)) {
+            System.out.println("Graphs are Identical. Intersection is G1.");
+        }
+
         int maxV = Math.max(v1, v2);
         List<List<Edge>> I = new ArrayList<>();
         for (int i = 0; i < maxV; i++)
@@ -108,8 +158,13 @@ public class P2 {
         return I;
     }
 
-    private static List<List<Edge>> Difference(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
-        // G1 - G2: Edges in G1 that are NOT in G2
+    static List<List<Edge>> Difference(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+        if (isEdgeDisjoint(G1, G2)) {
+            System.out.println("Edge Disjoint. Result is G1.");
+        } else if (isIdentical(G1, G2)) {
+            System.out.println("Identical. Result is empty.");
+        }
+
         int maxV = Math.max(v1, v2);
         List<List<Edge>> D = new ArrayList<>();
         for (int i = 0; i < maxV; i++)
@@ -124,8 +179,7 @@ public class P2 {
         return D;
     }
 
-    private static List<List<Edge>> Complement(List<List<Edge>> U, List<List<Edge>> G1, int vU, int v1) {
-        // U - G1 (relative to U)
+    static List<List<Edge>> Complement(List<List<Edge>> U, List<List<Edge>> G1, int vU, int v1) {
         List<List<Edge>> C = new ArrayList<>();
         for (int i = 0; i < vU; i++)
             C.add(new ArrayList<>());
@@ -139,20 +193,24 @@ public class P2 {
         return C;
     }
 
-    private static List<List<Edge>> RingSum(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
-        // (G1 U G2) - (G1 n G2) OR (G1 - G2) U (G2 - G1)
+    static List<List<Edge>> RingSum(List<List<Edge>> G1, List<List<Edge>> G2, int v1, int v2) {
+        if (isEdgeDisjoint(G1, G2)) {
+            System.out.println("Edge Disjoint. Result is equivalent to Union.");
+        } else if (isIdentical(G1, G2)) {
+            System.out.println("Identical. Result is empty.");
+        }
+
         int maxV = Math.max(v1, v2);
         List<List<Edge>> R = new ArrayList<>();
         for (int i = 0; i < maxV; i++)
             R.add(new ArrayList<>());
 
-        // G1 - G2
         for (int i = 0; i < v1; i++) {
             for (Edge e : G1.get(i))
                 if (!exists(G2, e))
                     R.get(i).add(e);
         }
-        // G2 - G1
+
         for (int i = 0; i < v2; i++) {
             for (Edge e : G2.get(i))
                 if (!exists(G1, e))
@@ -167,6 +225,27 @@ public class P2 {
         for (int i = 0; i < graph.size(); i++) {
             System.out.println(i + " -> " + graph.get(i));
         }
+    }
+
+    static List<List<Edge>> Fusion(List<List<Edge>> G1, int fuseU, int fuseV) {
+        printGraph(G1);
+        System.out.println("-----------------------");
+        for (Edge e : G1.get(fuseV)) {
+            G1.get(fuseU).add(new Edge(fuseU, e.dest, e.label));
+            G1.get(e.dest).add(new Edge(e.dest, fuseU, e.label));
+        }
+
+        for (int i = 0; i < G1.size(); i++) {
+            for (int j = G1.get(i).size() - 1; j >= 0; j--) {
+                if (G1.get(i).get(j).src == fuseV || G1.get(i).get(j).dest == fuseV) {
+                    G1.get(i).remove(j);
+                }
+            }
+        }
+
+        G1.get(fuseV).clear();
+        printGraph(G1);
+        return G1;
     }
 
     public static void main(String[] args) {
@@ -193,7 +272,8 @@ public class P2 {
             System.out.println("3. Difference (G1-G2)");
             System.out.println("4. Complement (~G1)");
             System.out.println("5. RingSum (Symmetric Difference)");
-            System.out.println("6. Exit");
+            System.out.println("6. Fusion");
+            System.out.println("7. Exit");
             System.out.print("Enter Choice: ");
             choice = sc.nextInt();
 
@@ -226,7 +306,8 @@ public class P2 {
                     }
                 }
                 case 5 -> result = RingSum(G1, G2, v1, v2);
-                case 6 -> System.out.println("Exiting...");
+                case 6 -> result = Fusion(G1, sc.nextInt(), sc.nextInt());
+                case 7 -> System.out.println("Exiting...");
                 default -> System.out.println("Invalid choice");
             }
 
